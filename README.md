@@ -18,6 +18,12 @@ can even start other Marathon instances via Marathon.
 
 Using Marathon versions 0.7.0+ and Mesos 0.20.0+, you can [deploy, run and scale Docker containers](https://mesosphere.github.io/marathon/docs/native-docker.html) with ease.
 
+## Customize
+
+We customize marathon to support GPU resource scheduling. Since the testing code is not updated, please use following command for compiling the code:
+
+        ./assembly_without_test.sh
+
 ## Features
 
 * *HA* -- run any number of Marathon schedulers, but only one gets elected as
@@ -44,33 +50,11 @@ We heartily welcome external contributions to Marathon's documentation. Document
 
 ## Setting Up And Running Marathon
 
-### Dependencies
-Marathon has the following compile-time dependencies:
-* sbt - A build tool for scala. You can find the instructions for installing sbt for Mac OS X and Linux over [here](http://www.scala-sbt.org/0.13/tutorial/Setup.html).
-* JDK 1.8+
-
-For run-time, Marathon has the following dependencies:
-* libmesos - JNI bindings for talking to Apache Mesos master. Look at the *Install Mesos* section for instructions to get libmesos.
-* Apache Zookeeper - You can have a spearate Zookeeper installation specifically for Marathon, or you can use the same Zookeeper used by Mesos.
-
 ### Installation
 
 #### Install Mesos
-Marathon requires libmesos, a shared object library, that contains JNI bindings for Marathon to talk to the Mesos master. *libmesos* comes as part of the Apache Mesos installation. There are two options for installing Apache Mesos. 
 
-##### Installing Mesos from prepackaged releases 
-Instructions on how to install prepackaged releases of Mesos are available [in the Marathon docs](https://mesosphere.github.io/marathon/docs/).
-
-##### Building Mesos from source
-**NOTE:** *Choose this option only if building Marathon from source, else there might be version incompatibility between pre-packaged releases of Marathon and Mesos built from source.*
-
-You can find the instructions for compiling Mesos from source in the [Apache Mesos getting started docs](http://mesos.apache.org/gettingstarted/). If you want Mesos to install libraries and executables in a non-default location use the --prefix option during configuration as follows:
-
-```console
-./configure --prefix=<path to Mesos installation>
-```
-
-The `make install` will install libmesos (libmesos.so on Linux and libmesos.dylib on Mac OS X) in the install directory.
+Marathon requires Mesos installed on the same machine in order to use a shared library. Instructions on how to install prepackaged releases of Mesos are available [in the Marathon docs](https://mesosphere.github.io/marathon/docs/).
 
 #### Install Marathon
 
@@ -85,7 +69,7 @@ Instructions on how to install prepackaged releases are available [in the Marath
         sbt assembly
 
 1.  Run `./bin/build-distribution` to package Marathon as an
-    [executable JAR](https://mesosphere.com/blog/2013/12/07/executable-jars/)
+    [executable JAR](http://mesosphere.com/2013/12/07/executable-jars/)
     (optional).
 
 ### Running in Development Mode
@@ -148,49 +132,44 @@ To develop on the web UI look into the instructions of the [Marathon UI](https:/
 
 Across all installations Marathon is managing applications on more than 100,000 nodes world-wide. These are some of the companies using it:
 
+* [Airbnb](https://www.airbnb.com/)
 * [Allegro Group](http://www.allegrogroup.com)
-* [AllUnite](https://allunite.com/)
+* [AllUnite](http://allunite.com)
 * [Argus Cyber Security](http://argus-sec.com/)
 * [Artirix](http://www.artirix.com/)
 * [Corvisa](https://www.corvisa.com/)
 * [bol.com](https://www.bol.com/)
 * [Branding Brand](http://www.brandingbrand.com/)
 * [Daemon](http://www.daemon.com.au/)
-* [DHL Parcel](https://www.dhlparcel.nl/)
-* [Disqus](https://disqus.com/)
+* [DHL Parcel](http://www.dhlparcel.nl)
+* [Disqus](https://www.disqus.com/)
 * [eBay](http://www.ebay.com/)
 * [The Factory](https://github.com/thefactory/)
 * [Football Radar](http://www.footballradar.com)
-* [Guidewire](https://www.guidewire.com/)
-* [Groupon](https://www.groupon.com/)
+* [Guidewire](http://www.guidewire.com/)
+* [Groupon](http://www.groupon.com/)
 * [GSShop](http://www.gsshop.com/)
 * [HolidayCheck](http://www.holidaycheck.com/)
 * [Human API](https://humanapi.co/)
 * [Indix](http://www.indix.com/)
 * [ING](http://www.ing.com/)
 * [iQIYI](http://www.iqiyi.com/)
-* [LaunchKey](https://launchkey.com/)
 * [Measurence](http://www.measurence.com/)
 * [Motus](http://www.motus.com/)
-* [Notonthehighstreet](http://www.notonthehighstreet.com/)
 * [OpenTable](http://www.opentable.com/)
 * [Orbitz](http://www.orbitz.com/)
 * [Otto](https://www.otto.de/)
 * [PayPal](https://www.paypal.com)
-* [Qubit](http://www.qubit.com/)
-* [RelateIQ](https://www.salesforceiq.com/)
+* [Qubit](http://www.qubitproducts.com/)
+* [RelateIQ](http://relateiq.com/)
 * [Refinery29](https://www.refinery29.com)
 * [Sailthru](http://www.sailthru.com/)
 * [sloppy.io](http://sloppy.io/)
 * [SmartProcure](https://smartprocure.us/)
 * [Strava](https://www.strava.com)
-* [Sveriges Television](http://www.svt.se)
-* [Teradata](http://www.teradata.com)
-* [trivago](http://www.trivago.com/)
-* [VANAD Enovation](http://www.vanadenovation.nl/)
 * [Viadeo](http://www.viadeo.com)
-* [Wikia](http://www.wikia.com/Wikia)
-* [WooRank](https://www.woorank.com/)
+* [Wikia](http://www.wikia.com)
+* [WooRank](http://www.woorank.com)
 * [Yelp](http://www.yelp.com/)
 
 Not in the list? Open a pull request and add yourself!
@@ -215,14 +194,14 @@ Marathon was created by [Tobias Knaup](https://github.com/guenter) and
 developed by the team at Mesosphere and by many contributors from
 the community.
 
-[Chronos]: https://github.com/mesos/chronos "Airbnb's Chronos"
+[Chronos]: https://github.com/airbnb/chronos "Airbnb's Chronos"
 [Mesos]: https://mesos.apache.org/ "Apache Mesos"
 [Zookeeper]: https://zookeeper.apache.org/ "Apache Zookeeper"
-[Storm]: http://storm.apache.org "distributed realtime computation"
+[Storm]: http://storm-project.net/ "distributed realtime computation"
 [freenode]: https://freenode.net/ "IRC channels"
 [upstart]: http://upstart.ubuntu.com/ "Ubuntu's event-based daemons"
 [init]: https://en.wikipedia.org/wiki/Init "init"
-[Mesosphere]: https://mesosphere.com/ "Mesosphere"
+[Mesosphere]: http://mesosphere.com/ "Mesosphere"
 
 ## Acknowledgements
 
