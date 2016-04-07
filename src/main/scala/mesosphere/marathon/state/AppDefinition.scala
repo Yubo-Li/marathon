@@ -43,6 +43,8 @@ case class AppDefinition(
 
   disk: JDouble = AppDefinition.DefaultDisk,
 
+  gpus: JDouble = AppDefinition.DefaultGpus,
+
   executor: String = AppDefinition.DefaultExecutor,
 
   constraints: Set[Constraint] = AppDefinition.DefaultConstraints,
@@ -107,6 +109,8 @@ case class AppDefinition(
     val cpusResource = ScalarResource(Resource.CPUS, cpus)
     val memResource = ScalarResource(Resource.MEM, mem)
     val diskResource = ScalarResource(Resource.DISK, disk)
+    val gpusResource = ScalarResource("gpus", gpus)
+
     val appLabels = labels.map {
       case (key, value) =>
         mesos.Parameter.newBuilder
@@ -129,6 +133,7 @@ case class AppDefinition(
       .addResources(cpusResource)
       .addResources(memResource)
       .addResources(diskResource)
+      .addResources(gpusResource)
       .addAllHealthChecks(healthChecks.map(_.toProto).asJava)
       .setUpgradeStrategy(upgradeStrategy.toProto)
       .addAllDependencies(dependencies.map(_.toString).asJava)
@@ -224,6 +229,7 @@ case class AppDefinition(
       cpus = resourcesMap.getOrElse(Resource.CPUS, this.cpus),
       mem = resourcesMap.getOrElse(Resource.MEM, this.mem),
       disk = resourcesMap.getOrElse(Resource.DISK, this.disk),
+      gpus = resourcesMap.getOrElse("gpus", this.gpus),
       env = envMap,
       fetch = proto.getCmd.getUrisList.asScala.map(FetchUri.fromProto).to[Seq],
       storeUrls = proto.getStoreUrlsList.asScala.to[Seq],
@@ -286,6 +292,7 @@ case class AppDefinition(
         cpus != to.cpus ||
         mem != to.mem ||
         disk != to.disk ||
+        gpus != to.gpus ||
         executor != to.executor ||
         constraints != to.constraints ||
         fetch != to.fetch ||
@@ -421,6 +428,8 @@ object AppDefinition {
   val DefaultMem: Double = 128.0
 
   val DefaultDisk: Double = 0.0
+
+  val DefaultGpus: Double = 0.0
 
   val DefaultExecutor: String = ""
 

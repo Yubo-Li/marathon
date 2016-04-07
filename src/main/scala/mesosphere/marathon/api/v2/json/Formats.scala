@@ -517,6 +517,7 @@ trait AppAndGroupFormats {
       (__ \ "cpus").readNullable[JDouble](greaterThan(0.0)).withDefault(AppDefinition.DefaultCpus) ~
       (__ \ "mem").readNullable[JDouble].withDefault(AppDefinition.DefaultMem) ~
       (__ \ "disk").readNullable[JDouble].withDefault(AppDefinition.DefaultDisk) ~
+      (__ \ "gpus").readNullable[JDouble].withDefault(AppDefinition.DefaultGpus) ~
       (__ \ "executor").readNullable[String](Reads.pattern(executorPattern))
       .withDefault(AppDefinition.DefaultExecutor) ~
       (__ \ "constraints").readNullable[Set[Constraint]].withDefault(AppDefinition.DefaultConstraints) ~
@@ -529,11 +530,11 @@ trait AppAndGroupFormats {
       (__ \ "container").readNullable[Container] ~
       (__ \ "healthChecks").readNullable[Set[HealthCheck]].withDefault(AppDefinition.DefaultHealthChecks)
     )((
-        id, cmd, args, maybeString, env, instances, cpus, mem, disk, executor, constraints, storeUrls,
+        id, cmd, args, maybeString, env, instances, cpus, mem, disk, gpus, executor, constraints, storeUrls,
         requirePorts, backoff, backoffFactor, maxLaunchDelay, container, checks
       ) => AppDefinition(
         id = id, cmd = cmd, args = args, user = maybeString, env = env, instances = instances, cpus = cpus,
-        mem = mem, disk = disk, executor = executor, constraints = constraints, storeUrls = storeUrls,
+        mem = mem, disk = disk, gpus = gpus, executor = executor, constraints = constraints, storeUrls = storeUrls,
         ports = Nil, requirePorts = requirePorts, backoff = backoff, backoffFactor = backoffFactor,
         maxLaunchDelay = maxLaunchDelay, container = container, healthChecks = checks)).flatMap { app =>
         // necessary because of case class limitations (good for another 21 fields)
@@ -633,6 +634,7 @@ trait AppAndGroupFormats {
         "cpus" -> app.cpus,
         "mem" -> app.mem,
         "disk" -> app.disk,
+        "gpus" -> app.gpus,
         "executor" -> app.executor,
         "constraints" -> app.constraints,
         "uris" -> app.fetch.map(_.uri),
@@ -751,6 +753,7 @@ trait AppAndGroupFormats {
     (__ \ "cpus").readNullable[JDouble](greaterThan(0.0)) ~
     (__ \ "mem").readNullable[JDouble] ~
     (__ \ "disk").readNullable[JDouble] ~
+    (__ \ "gpus").readNullable[JDouble] ~
     (__ \ "executor").readNullable[String](Reads.pattern("^(//cmd)|(/?[^/]+(/[^/]+)*)|$".r)) ~
     (__ \ "constraints").readNullable[Set[Constraint]] ~
     (__ \ "storeUrls").readNullable[Seq[String]] ~
@@ -761,10 +764,10 @@ trait AppAndGroupFormats {
     (__ \ "maxLaunchDelaySeconds").readNullable[Long].map(_.map(_.seconds)) ~
     (__ \ "container").readNullable[Container] ~
     (__ \ "healthChecks").readNullable[Set[HealthCheck]]
-  )((id, cmd, args, user, env, instances, cpus, mem, disk, executor, constraints, storeUrls, ports,
+  )((id, cmd, args, user, env, instances, cpus, mem, disk, gpus, executor, constraints, storeUrls, ports,
       requirePorts, backoffSeconds, backoffFactor, maxLaunchDelaySeconds, container, healthChecks) => AppUpdate(
       id = id, cmd = cmd, args = args, user = user, env = env, instances = instances, cpus = cpus, mem = mem,
-      disk = disk, executor = executor, constraints = constraints, storeUrls = storeUrls, ports = ports,
+      disk = disk, gpus = gpus, executor = executor, constraints = constraints, storeUrls = storeUrls, ports = ports,
       requirePorts = requirePorts, backoff = backoffSeconds, backoffFactor = backoffFactor,
       maxLaunchDelay = maxLaunchDelaySeconds, container = container, healthChecks = healthChecks)).flatMap { update =>
       // necessary because of case class limitations (good for another 21 fields)

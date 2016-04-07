@@ -35,6 +35,8 @@ case class AppUpdate(
 
     disk: Option[JDouble] = None,
 
+    gpus: Option[JDouble] = None,
+
     executor: Option[String] = None,
 
     constraints: Option[Set[Constraint]] = None,
@@ -90,6 +92,7 @@ case class AppUpdate(
     cpus = cpus.getOrElse(app.cpus),
     mem = mem.getOrElse(app.mem),
     disk = disk.getOrElse(app.disk),
+    gpus = gpus.getOrElse(app.gpus),
     executor = executor.getOrElse(app.executor),
     constraints = constraints.getOrElse(app.constraints),
     fetch = fetch.getOrElse(app.fetch),

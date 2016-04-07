@@ -16,6 +16,7 @@ import play.api.libs.json.Json
 import scala.collection.JavaConverters._
 import scala.collection.immutable.Seq
 import scala.collection.mutable
+import scala.math
 
 class TaskBuilder(app: AppDefinition,
                   newTaskId: PathId => TaskID,
@@ -23,6 +24,7 @@ class TaskBuilder(app: AppDefinition,
 
   import mesosphere.mesos.protos.Implicits._
 
+  val gpuPrefix = "gpu_core_"
   val log = LoggerFactory.getLogger(getClass.getName)
 
   def buildIfMatches(offer: Offer, runningTasks: => Iterable[MarathonTask]): Option[(TaskInfo, Seq[Long])] = {
@@ -37,8 +39,8 @@ class TaskBuilder(app: AppDefinition,
       offer, app, runningTasks,
       acceptedResourceRoles = acceptedResourceRoles) match {
 
-        case Some(ResourceMatch(cpu, mem, disk, ranges)) =>
-          build(offer, cpu, mem, disk, ranges)
+        case Some(ResourceMatch(cpu, mem, disk, gpus, ranges)) =>
+          build(offer, cpu, mem, disk, gpus, ranges)
 
         case _ =>
           def logInsufficientResources(): Unit = {
@@ -68,7 +70,7 @@ class TaskBuilder(app: AppDefinition,
 
             log.info(
               s"Offer [${offer.getId.getValue}]. Insufficient resources for [${app.id}] (need cpus=${app.cpus}, " +
-                s"mem=${app.mem}, disk=${app.disk}, $portsString, available in offer: " +
+                s"mem=${app.mem}, disk=${app.disk}, gpus=${app.gpus}, $portsString, available in offer: " +
                 s"[${TextFormat.shortDebugString(offer)}]"
             )
           }
@@ -80,7 +82,7 @@ class TaskBuilder(app: AppDefinition,
 
   //TODO: fix style issue and enable this scalastyle check
   //scalastyle:off cyclomatic.complexity method.length
-  private def build(offer: Offer, cpuRole: String, memRole: String, diskRole: String,
+  private def build(offer: Offer, cpuRole: String, memRole: String, diskRole: String, gpusRole: String,
                     portsResources: Seq[RangesResource]): Some[(TaskInfo, Seq[Long])] = {
 
     val executor: Executor = if (app.executor == "") {
@@ -119,6 +121,28 @@ class TaskBuilder(app: AppDefinition,
       //
       // This is not enforced in Mesos without specifically configuring the appropriate enforcer.
       builder.addResources(ScalarResource(Resource.DISK, app.disk, diskRole))
+    }
+
+    if (app.gpus != 0) {
+      // Yubo: Not pass GPU resources to mesos if gpu == 0
+      val offerGpusResource = offer.getResourcesList.asScala.groupBy(_.getName).filterKeys(key => key.startsWith(gpuPrefix))
+      val acceptedResourceRoles = Set("*")
+      var leftGpusReq = app.gpus
+      for ((key, resources) <- offerGpusResource) {
+        val matchingScalarResources = resources.filter { resource =>
+          acceptedResourceRoles(resource.getRole) && resource.hasScalar
+        }
+        val gpus = matchingScalarResources.map { resource =>
+          resource.getScalar.getValue
+        }.sum
+
+        if (gpus > 0 && leftGpusReq > 0) {
+          val offeredGpus = math.min(gpus, leftGpusReq)
+          builder.addResources(ScalarResource(key, offeredGpus, gpusRole))
+          leftGpusReq = leftGpusReq - offeredGpus
+          log.info(s"Yubo -- add GPU resources: ${key}:${offeredGpus}")
+        }
+      }
     }
 
     if (labels.nonEmpty)
