@@ -110,7 +110,7 @@ object ResourceMatcher {
       }
     log.info(s"Yubo -- gpusMatchOpt: [${gpusMatchOpt}]")
 
-    logUnsatisfiedResources(offer, acceptedResourceRoles, cpuMatchOpt, memMatchOpt, diskMatchOpti, gpusMatchOpt)
+    logUnsatisfiedResources(offer, acceptedResourceRoles, cpuMatchOpt, memMatchOpt, diskMatchOpt, gpusMatchOpt)
 
     def portsOpt: Option[Seq[RangesResource]] = new PortsMatcher(app, offer, acceptedResourceRoles).portRanges
 
