@@ -16,6 +16,11 @@ can even start other Marathon instances via Marathon.
 
 Since Marathon version 0.7.0 and Mesos 0.20.0, you can [deploy, run and scale Docker containers](https://mesosphere.github.io/marathon/docs/native-docker.html) easily with native support.
 
+## Customize
+We customize marathon to support GPU resource scheduling based on [MESOS-4424](https://issues.apache.org/jira/browse/MESOS-4424) and our compatible [mesos GPU docker extension](https://github.ibm.com/dockeronpower/mesos). Since the testing code is not updated, please use following command for compiling the code:
+
+    ./assembly_without_test.sh
+
 ## Features
 
 * *HA* -- run any number of Marathon schedulers, but only one gets elected as
