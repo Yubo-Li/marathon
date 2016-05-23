@@ -107,7 +107,9 @@ object ResourceMatcher {
     val scalarMatchResults = Iterable(
       scalarResourceMatch(Resource.CPUS, app.cpus, ScalarMatchResult.Scope.NoneDisk),
       scalarResourceMatch(Resource.MEM, app.mem, ScalarMatchResult.Scope.NoneDisk),
-      diskMatch
+      diskMatch,
+      // Yubo: Hard-coded "gpus" here.
+      scalarResourceMatch("gpus", app.gpus.toDouble, ScalarMatchResult.Scope.NoneDisk)
     ).filter(_.requiredValue != 0)
 
     logUnsatisfiedResources(offer, selector, scalarMatchResults)

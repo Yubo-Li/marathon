@@ -30,6 +30,8 @@ case class AppUpdate(
 
     disk: Option[Double] = None,
 
+    gpus: Option[Int] = None,
+
     executor: Option[String] = None,
 
     constraints: Option[Set[Constraint]] = None,
@@ -105,6 +107,7 @@ case class AppUpdate(
     cpus = cpus.getOrElse(app.cpus),
     mem = mem.getOrElse(app.mem),
     disk = disk.getOrElse(app.disk),
+    gpus = gpus.getOrElse(app.gpus),
     executor = executor.getOrElse(app.executor),
     constraints = constraints.getOrElse(app.constraints),
     fetch = fetch.getOrElse(app.fetch),
@@ -151,5 +154,6 @@ object AppUpdate {
     appUp.cpus should optional(be >= 0.0)
     appUp.instances should optional(be >= 0)
     appUp.disk should optional(be >= 0.0)
+    appUp.gpus should optional(be >= 0)
   }
 }
