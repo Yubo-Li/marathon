@@ -486,12 +486,14 @@ object MarathonTestHelper {
   }
 
   def statusForState(taskId: String, state: Mesos.TaskState, maybeReason: Option[TaskStatus.Reason] = None): Mesos.TaskStatus = {
-    Mesos.TaskStatus
+    val builder = Mesos.TaskStatus
       .newBuilder()
       .setTaskId(TaskID.newBuilder().setValue(taskId))
       .setState(state)
-      .setReason(maybeReason.getOrElse(TaskStatus.Reason.REASON_RECONCILIATION))
-      .buildPartial()
+
+    maybeReason.foreach(builder.setReason)
+
+    builder.buildPartial()
   }
 
   def persistentVolumeResources(taskId: Task.Id, localVolumeIds: Task.LocalVolumeId*) = localVolumeIds.map { id =>

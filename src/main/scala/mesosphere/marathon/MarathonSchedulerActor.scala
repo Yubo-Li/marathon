@@ -518,6 +518,8 @@ class SchedulerActions(
     */
   // FIXME: extract computation into a function that can be easily tested
   def scale(driver: SchedulerDriver, app: AppDefinition): Unit = {
+    import SchedulerActions._
+
     // FIXME (merge): there are now 2 filters ...
     val launchedCount = taskTracker.countLaunchedAppTasksSync(app.id,
       _.mesosStatus.fold(false)(_.getState != TaskState.TASK_LOST))
@@ -542,14 +544,14 @@ class SchedulerActions(
       launchQueue.purge(app.id)
 
       // FIXME (merge): resolve this
-      //      val toKill = taskTracker.appTasksSync(app.id).toSeq
-      //        .filter(t => runningOrStaged.get(t.getStatus.getState).nonEmpty)
-      //        .sortWith(sortByStateAndTime)
-      //        .take(currentCount - targetCount)
-      //      log.info(s"Killing tasks: ${toKill.map(_.getId)}")
-      //      for (task <- toKill) {
-      //        driver.killTask(protos.TaskID(task.getId))
-      //      }
+//            val toKill = taskTracker.appTasksSync(app.id).toSeq
+//              .filter(t => runningOrStaged.get(t.getStatus.getState).nonEmpty)
+//              .sortWith(sortByStateAndTime)
+//              .take(currentCount - targetCount)
+//            log.info(s"Killing tasks: ${toKill.map(_.getId)}")
+//            for (task <- toKill) {
+//              driver.killTask(protos.TaskID(task.getId))
+//            }
 
       val toKill = taskTracker.appTasksLaunchedSync(app.id).take(launchedCount - targetCount)
       val taskIds: Iterable[TaskID] = toKill.flatMap(_.launchedMesosId)
