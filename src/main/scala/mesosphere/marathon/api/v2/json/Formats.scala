@@ -996,7 +996,8 @@ trait AppAndGroupFormats {
       backoffSeconds, backoffFactor, maxLaunchDelaySeconds, container, healthChecks, dependencies) =>
       AppUpdate(
         id = id, cmd = cmd, args = args, user = user, env = env, instances = instances, cpus = cpus, mem = mem,
-        disk = disk, gpus = gpus, executor = executor, constraints = constraints, storeUrls = storeUrls, requirePorts = requirePorts,
+        disk = disk, gpus = gpus, executor = executor, constraints = constraints,
+        storeUrls = storeUrls, requirePorts = requirePorts,
         backoff = backoffSeconds, backoffFactor = backoffFactor, maxLaunchDelay = maxLaunchDelaySeconds,
         container = container, healthChecks = healthChecks, dependencies = dependencies
       )
