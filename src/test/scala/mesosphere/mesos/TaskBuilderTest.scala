@@ -1067,6 +1067,7 @@ class TaskBuilderTest extends MarathonSpec with Matchers {
         "MARATHON_APP_RESOURCE_CPUS" -> AppDefinition.DefaultCpus.toString,
         "MARATHON_APP_RESOURCE_MEM" -> AppDefinition.DefaultMem.toString,
         "MARATHON_APP_RESOURCE_DISK" -> AppDefinition.DefaultDisk.toString,
+        "MARATHON_APP_RESOURCE_GPUS" -> AppDefinition.DefaultGpus.toString,
         "MARATHON_APP_LABELS" -> ""
       )
     )
@@ -1086,6 +1087,7 @@ class TaskBuilderTest extends MarathonSpec with Matchers {
       cpus = 10.0,
       mem = 256.0,
       disk = 128.0,
+      gpus = 2,
       labels = Map(
         "LABEL1" -> "VALUE1",
         "LABEL2" -> "VALUE2"
@@ -1102,6 +1104,7 @@ class TaskBuilderTest extends MarathonSpec with Matchers {
         "MARATHON_APP_RESOURCE_CPUS" -> "10.0",
         "MARATHON_APP_RESOURCE_MEM" -> "256.0",
         "MARATHON_APP_RESOURCE_DISK" -> "128.0",
+        "MARATHON_APP_RESOURCE_GPUS" -> "2",
         "MARATHON_APP_LABELS" -> "LABEL1 LABEL2",
         "MARATHON_APP_LABEL_LABEL1" -> "VALUE1",
         "MARATHON_APP_LABEL_LABEL2" -> "VALUE2"
@@ -1264,7 +1267,7 @@ class TaskBuilderTest extends MarathonSpec with Matchers {
     val nonPrefixedEnvVars = env.filterKeys(!_.startsWith("P_"))
 
     val whiteList = Seq("MESOS_TASK_ID", "MARATHON_APP_ID", "MARATHON_APP_VERSION", "MARATHON_APP_RESOURCE_CPUS",
-      "MARATHON_APP_RESOURCE_MEM", "MARATHON_APP_RESOURCE_DISK", "MARATHON_APP_LABELS")
+      "MARATHON_APP_RESOURCE_MEM", "MARATHON_APP_RESOURCE_DISK", "MARATHON_APP_RESOURCE_GPUS", "MARATHON_APP_LABELS")
 
     assert(nonPrefixedEnvVars.keySet.forall(whiteList.contains))
   }
