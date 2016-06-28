@@ -314,13 +314,11 @@ class TaskBuilderTest extends MarathonSpec with Matchers {
     }
 
     assert(taskInfo.getContainer.getVolumesList.size > 0, "check that container has volumes declared")
-    assert(!taskInfo.getContainer.getDocker.hasVolumeDriver, "docker spec should not define a volume driver")
     assert(vol("namedFoo").isDefined,
       s"missing expected volume namedFoo, got instead: ${taskInfo.getContainer.getVolumesList}")
   }
 
   // TODO(jdef) test both dockerhostvol and persistent extvol in the same docker container
-
   test("build creates task for DOCKER container using external [DockerVolume] volumes") {
     val offer = MarathonTestHelper.makeBasicOffer(
       cpus = 2.0, mem = 128.0, disk = 2000.0, beginPort = 31000, endPort = 32000
@@ -367,8 +365,9 @@ class TaskBuilderTest extends MarathonSpec with Matchers {
     }
 
     assert(taskInfo.getContainer.getVolumesList.size > 0, "check that container has volumes declared")
-    assert(taskInfo.getContainer.getDocker.hasVolumeDriver, "docker spec should define a volume driver")
-    assert(taskInfo.getContainer.getDocker.getVolumeDriver == "ert", "docker spec should choose ert driver")
+    // Yubo: VolumeDriver is deprecated.
+    //assert(taskInfo.getContainer.getDocker.hasVolumeDriver, "docker spec should define a volume driver")
+    //assert(taskInfo.getContainer.getDocker.getVolumeDriver == "ert", "docker spec should choose ert driver")
     assert(vol("namedFoo").isDefined,
       s"missing expected volume namedFoo, got instead: ${taskInfo.getContainer.getVolumesList}")
     assert(vol("namedEdc").isDefined,

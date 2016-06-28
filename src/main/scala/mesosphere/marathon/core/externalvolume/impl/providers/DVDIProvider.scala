@@ -89,8 +89,9 @@ private[impl] case object DVDIProvider extends ExternalVolumeProvider {
     // - docker containerizer: serialize volumes into mesos proto
     // - docker containerizer: specify "volumeDriver" for the container
     if (builder.getType == ContainerInfo.Type.DOCKER && builder.hasDocker) {
-      val driverName = ev.external.options(driverOption)
-      builder.setDocker(builder.getDocker.toBuilder.setVolumeDriver(driverName).build)
+      // Yubo: setVolumeDriver() deprecated since mesos 1.0
+      //val driverName = ev.external.options(driverOption)
+      //builder.setDocker(builder.getDocker.toBuilder.setVolumeDriver(driverName).build)
       builder.addVolumes(Builders.toDockerizedMesosVolume(ev))
     }
     else if (builder.getType == ContainerInfo.Type.MESOS) {

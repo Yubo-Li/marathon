@@ -68,6 +68,14 @@ object MarathonSchedulerDriver {
     if (config.isFeatureSet(Features.TASK_KILLING))
       frameworkInfoBuilder.addCapabilities(Capability.newBuilder().setType(Capability.Type.TASK_KILLING_STATE))
 
+    // GPU Resources feature gives Marathon capability to get GPU related resources offers from Mesos. In current,
+    // key "gpus" in Marathon's API can only work with GPU Resources feature enabled. For details for GPU Resource
+    // feature, see MESOS-5634.
+    if (config.isFeatureSet(Features.GPU_RESOURCES)) {
+      frameworkInfoBuilder.addCapabilities(Capability.newBuilder().setType(Capability.Type.GPU_RESOURCES))
+      log.info("GPU_RESOURCES feature enabled.")
+    }
+
     val frameworkInfo = frameworkInfoBuilder.build()
 
     log.debug("Start creating new driver")
