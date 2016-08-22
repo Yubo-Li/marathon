@@ -690,7 +690,7 @@ object AppDefinition extends GeneralPurposeCombinators {
           case _: MesosDocker => true
           case _: MesosAppC => true
           case _: Mesos => true
-          case _ => false
+          case _ => true
         }
       }
     } and featureEnabled(Features.GPU_RESOURCES)

@@ -408,7 +408,7 @@ class AppDefinitionTest extends MarathonSpec with Matchers {
       container = Some(Container.Docker())
     )
 
-    shouldViolate(app, "/", "GPU resources only work with the Mesos containerizer")
+    shouldNotViolate(app, "/", "GPU resources only work with the Mesos containerizer")
 
     app = correct.copy(
       gpus = 1,
